@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    // ===== CONFIG JÁ EXISTENTE =====
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -11,12 +12,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    }, 
+    "types": ["vitest/globals", "node"]
   },
-  "types": ["node"],
+
   "include": [
-    "src/**/*.ts",
-    "src/**/*.vue",
+    "src",
+    "tests",
     "vite-env.d.ts"
   ]
 }

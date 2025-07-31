@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import ExamListPage from '@/modules/exams/pages/ExamListPage.vue'
-import PackageListPage from '@/modules/exams/pages/PackageListPage.vue'
+import ExamSummaryPage from '@/modules/exams/pages/ExamSummaryPage.vue'
 
 Vue.use(Router)
 
@@ -21,7 +21,8 @@ export default new Router({
     {
       path: '/exams/summary',
       name: 'ExamSummary',
-      component: PackageListPage,
-    },
+      component: ExamSummaryPage,
+    }
+
   ],
 })
