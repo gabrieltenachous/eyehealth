@@ -1,0 +1,60 @@
+# ================================
+# ⚙️ BACKEND (Laravel)
+# ================================
+api/vendor/
+api/node_modules/
+api/storage/*.key
+api/storage/*.log
+api/storage/framework/cache/data/*
+api/storage/framework/sessions/*
+api/storage/framework/views/*
+api/storage/logs/*
+api/.env
+api/.env.*.local
+api/.phpunit.result.cache
+api/public/storage
+api/bootstrap/cache/*.php
+
+# Docker
+api/docker-compose.override.yml
+api/.docker/
+
+# ================================
+# 🖥 FRONTEND (Vue + TS + Vite)
+# ================================
+front/node_modules/
+front/dist/
+front/.vite/
+front/coverage/
+front/types/
+front/.env
+front/.env.*.local
+front/.eslintcache
+front/.nuxt/
+front/.output/
+front/.vercel/
+front/.turbo/
+
+# ================================
+# 🛠️ GERAIS / RAIZ DO PROJETO
+# ================================
+*.log
+*.tsbuildinfo
+*.pid
+*.seed
+*.bak
+*.swp
+*~
+*.zip
+*.tar.gz
+*.tgz
+
+# IDEs e sistema operacional
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.env
+.env.*.local

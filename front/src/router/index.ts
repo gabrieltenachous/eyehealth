@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import ExamListPage from '@/modules/exams/pages/ExamListPage.vue'
+import PackageListPage from '@/modules/exams/pages/PackageListPage.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -8,10 +11,17 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: {
-        template: '<div>Hello World!</div>',
-      },
+      redirect: '/exams/selection',
+    },
+    {
+      path: '/exams/selection',
+      name: 'ExamSelection',
+      component: ExamListPage,
+    },
+    {
+      path: '/exams/summary',
+      name: 'ExamSummary',
+      component: PackageListPage,
     },
   ],
 })
