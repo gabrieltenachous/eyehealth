@@ -1,20 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
-    "declaration": true,
-    "noUnusedLocals": true,
-    "esModuleInterop": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "removeComments": false,
     "jsx": "preserve",
-    "experimentalDecorators": true,
-    "outDir": "dist",
-    "module": "commonjs",
-    "lib": ["esnext", "dom"],
-    "sourceMap": true
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["./src", "./index.d.ts"]
+  "types": ["node"],
+  "include": ["src/**/*.ts", "src/**/*.vue"]
 }
