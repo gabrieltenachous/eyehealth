@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // ===== CONFIG JÁ EXISTENTE =====
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -13,12 +12,13 @@
     "paths": {
       "@/*": ["src/*"]
     }, 
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node", "cypress"]
   },
 
   "include": [
-    "src",
+    "src/**/*.ts",
     "tests",
-    "vite-env.d.ts"
+    "vite-env.d.ts",
+    "cypress/**/*.ts"
   ]
 }
