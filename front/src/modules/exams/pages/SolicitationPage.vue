@@ -7,9 +7,7 @@
         <BaseButton @click="showListModal = true" variant="secondary">
           Pacotes
         </BaseButton>
-        <BaseButton @click="showCreateModal = true">
-          Criar Pacote
-        </BaseButton>
+        <BaseButton @click="showCreateModal = true"> Criar Pacote </BaseButton>
       </div>
     </div>
 
@@ -44,6 +42,7 @@ import PackageCreateModal from '@/modules/exams/components/PackageCreateModal.vu
 import SolicitationSummary from '@/modules/exams/components/SolicitationSummary.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { Exam } from '@/modules/exams'
+const LOCAL_STORAGE_KEY = 'selected_exams'
 
 export default defineComponent({
   components: {
@@ -66,6 +65,7 @@ export default defineComponent({
 
     const handleSelect = (exams: Exam[]) => {
       selected.value = exams
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(exams))
     }
 
     const handlePackageSelect = (packageExams: Exam[]) => {
@@ -87,6 +87,16 @@ export default defineComponent({
 
       const pkgData = await fetchPackages()
       packageStore.setPackages(pkgData)
+
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (saved) {
+        try {
+          selected.value = JSON.parse(saved)
+        } catch (e) {
+          console.error('Erro ao recuperar exames do localStorage', e)
+          selected.value = []
+        }
+      }
     })
 
     return {
