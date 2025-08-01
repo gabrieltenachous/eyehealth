@@ -1,10 +1,6 @@
 <template>
   <div class="p-6">
-    <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1>
-    <BaseButton @click="goBack" variant="secondary" class="mt-6">
-      Voltar e editar seleção
-    </BaseButton>
-
+    <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1> 
     <div v-if="groupedExams.length === 0" class="text-gray-500">
       Nenhum exame selecionado.
     </div>
@@ -34,6 +30,10 @@
     <router-link to="/exams/selection">
       <BaseButton variant="secondary">Voltar à seleção</BaseButton>
     </router-link>
+    <BaseButton class="mt-4 ml-4" variant="primary" @click="downloadPdf">
+      Baixar PDF
+    </BaseButton>
+
   </div>
 </template>
 
@@ -41,6 +41,8 @@
 import { Exam } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
 import { useRoute } from 'vue-router/types/composables'
+import { generatePdf } from '@/modules/exams/services/pdfService'
+import { useUiStore } from '@/stores/ui'
 export default {
   name: 'ExamSummaryPage',
   components: { BaseButton },
@@ -56,6 +58,20 @@ export default {
   methods: {
     goBack() {
       this.$router.push('/exams/solicitation')
+    },
+    async downloadPdf() {
+      const uiStore = useUiStore()
+
+      if (!this.exams.length) return
+
+      uiStore.setLoading(true)
+      try {
+        await generatePdf(this.exams)
+      } catch (err) {
+        console.error('Erro ao baixar PDF', err)
+      } finally {
+        uiStore.setLoading(false)
+      }
     },
   },
   computed: {
