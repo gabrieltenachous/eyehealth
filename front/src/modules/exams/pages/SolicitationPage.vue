@@ -23,7 +23,7 @@
       >
         Visualizar resumo
       </BaseButton>
-    </div>
+    </div> 
 
     <PackageListModal
       :visible="showListModal"
@@ -103,10 +103,16 @@ export default {
       packageStore.addPackage(pkg)
       examStore.setExams(pkg.exams)
 
-      this.packages = packageStore.packages
+      this.packages = packageStore.packages 
       this.selected = pkg.exams
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(pkg.exams))
       this.showCreateModal = false
+    },
+    resetSelection() {
+      const examStore = useExamStore()
+      examStore.setExams([])
+      this.selected = []
+      localStorage.removeItem(LOCAL_STORAGE_KEY)
     },
     handleSelect(exams: Exam[]) {
       this.selected = exams
