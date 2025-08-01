@@ -35,7 +35,8 @@
     <PackageCreateModal
       :visible="showCreateModal"
       :exams="exams"
-      @close="handleCloseCreateModal"
+      @close="showCreateModal = false"
+      @create="handlePackageCreate"
     />
   </div>
 </template>
@@ -95,6 +96,18 @@ export default {
     }
   },
   methods: {
+    handlePackageCreate(pkg: Package) {
+      const packageStore = usePackageStore()
+      const examStore = useExamStore()
+
+      packageStore.addPackage(pkg)
+      examStore.setExams(pkg.exams)
+
+      this.packages = packageStore.packages
+      this.selected = pkg.exams
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(pkg.exams))
+      this.showCreateModal = false
+    },
     handleSelect(exams: Exam[]) {
       this.selected = exams
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(exams))
