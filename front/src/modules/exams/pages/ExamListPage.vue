@@ -1,13 +1,6 @@
 <template>
   <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">Lista de Exames</h1>
-    <template>
-      <div
-        class="p-10 bg-gray-100 text-center text-2xl font-bold text-blue-600"
-      >
-        Tailwind está funcionando?
-      </div>
-    </template>
+    <h1 class="text-xl font-bold mb-4">Lista de Exames</h1> 
 
     <ExamSelection :exams="exams" @selected="handleSelected" />
   </div>
