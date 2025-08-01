@@ -15,6 +15,14 @@
 
     <div v-if="selected.length > 0" class="pt-4 border-t">
       <SolicitationSummary :exams="selected" />
+      <BaseButton
+        class="mt-6"
+        variant="primary"
+        :disabled="selected.length === 0"
+        @click="goToSummary"
+      >
+        Visualizar resumo
+      </BaseButton>
     </div>
 
     <PackageListModal
@@ -31,20 +39,20 @@
     />
   </div>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
-import { useExamStore, usePackageStore } from '@/modules/exams'
+import { Exam, Package } from '@/modules/exams'
 import { fetchExams, fetchPackages } from '@/modules/exams'
+import { useExamStore, usePackageStore } from '@/modules/exams'
 import ExamSelection from '@/modules/exams/components/ExamSelection.vue'
 import PackageListModal from '@/modules/exams/components/PackageListModal.vue'
 import PackageCreateModal from '@/modules/exams/components/PackageCreateModal.vue'
 import SolicitationSummary from '@/modules/exams/components/SolicitationSummary.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { Exam } from '@/modules/exams'
+
 const LOCAL_STORAGE_KEY = 'selected_exams'
 
-export default defineComponent({
+export default {
+  name: 'SolicitationPage',
   components: {
     ExamSelection,
     PackageListModal,
@@ -52,63 +60,72 @@ export default defineComponent({
     SolicitationSummary,
     BaseButton,
   },
-  setup() {
-    const store = useExamStore()
-    const packageStore = usePackageStore()
-    const packages = computed(() => packageStore.packages)
-
-    const selected = ref<Exam[]>([])
-    const showListModal = ref(false)
-    const showCreateModal = ref(false)
-
-    const exams = computed(() => store.exams)
-
-    const handleSelect = (exams: Exam[]) => {
-      selected.value = exams
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(exams))
-    }
-
-    const handlePackageSelect = (packageExams: Exam[]) => {
-      selected.value = packageExams
-      showListModal.value = false
-    }
-
-    const handleCloseCreateModal = async () => {
-      showCreateModal.value = false
-      const latestPackages = await fetchPackages()
-      packageStore.setPackages(latestPackages)
-    }
-
-    onMounted(async () => {
-      if (!store.exams.length) {
-        const data = await fetchExams()
-        store.setExams(data)
-      }
-
-      const pkgData = await fetchPackages()
-      packageStore.setPackages(pkgData)
-
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
-      if (saved) {
-        try {
-          selected.value = JSON.parse(saved)
-        } catch (e) {
-          console.error('Erro ao recuperar exames do localStorage', e)
-          selected.value = []
-        }
-      }
-    })
-
+  data() {
     return {
-      exams,
-      selected,
-      showListModal,
-      showCreateModal,
-      packages,
-      handleSelect,
-      handlePackageSelect,
-      handleCloseCreateModal,
+      selected: [] as Exam[],
+      showListModal: false,
+      showCreateModal: false,
+      exams: [] as Exam[],
+      packages: [] as Package[],
     }
   },
-})
+  async mounted() {
+    const examStore = useExamStore()
+    const packageStore = usePackageStore()
+
+    if (!examStore.exams.length) {
+      const data = await fetchExams()
+      examStore.setExams(data)
+    }
+
+    const data = await fetchPackages()
+    packageStore.setPackages(data)
+
+    this.exams = examStore.exams
+    this.packages = packageStore.packages
+
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (saved) {
+      try {
+        this.selected = JSON.parse(saved)
+      } catch (e) {
+        console.error('Erro ao recuperar exames do localStorage', e)
+        this.selected = []
+      }
+    }
+  },
+  methods: {
+    handleSelect(exams: Exam[]) {
+      this.selected = exams
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(exams))
+    },
+    handlePackageSelect(packageExams: Exam[]) {
+      this.selected = packageExams
+      this.showListModal = false
+    },
+    async handleCloseCreateModal() {
+      this.showCreateModal = false
+      const latestPackages = await fetchPackages()
+      const packageStore = usePackageStore()
+      packageStore.setPackages(latestPackages)
+      this.packages = packageStore.packages
+    },
+    goToSummary() {
+      const grouped = []
+      const all = [...this.selected]
+      const max = 4
+
+      for (let i = 0; i < all.length; i += max) {
+        grouped.push(all.slice(i, i + max))
+      }
+
+      this.$router.push({
+        path: '/exams/summary',
+        query: {
+          exams: JSON.stringify(grouped.flat()),
+        },
+      })
+    },
+  },
+}
 </script>
