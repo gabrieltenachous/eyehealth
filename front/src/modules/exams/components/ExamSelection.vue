@@ -31,11 +31,13 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { Exam } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
+import { bulkCreateExams } from '../services/examService'
+import { useUiStore } from '@/stores/ui'
+import { useToast } from '@/composables/useToast'
 
 export default defineComponent({
   name: 'ExamSelection',
@@ -52,14 +54,33 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const selectedIds = ref<string[]>([])
+    const exams = computed(() => props.exams)
+    const uiStore = useUiStore()
+    const toast = useToast()
 
-    const exams = computed(() => props.exams) // ✅ Aqui está a reatividade correta
+    async function emitSelection() {
+      if (selectedIds.value.length === 0) return;
 
-    const emitSelection = () => {
-      const selected = exams.value.filter((exam: Exam) =>
-        selectedIds.value.includes(exam.id)
-      )
-      emit('selected', selected)
+      uiStore.setLoading(true)
+      try {
+        const examsToSend = selectedIds.value.map((id: string) => {
+          const exam = exams.value.find((e: Exam) => e.id === id)
+          return {
+            name: exam?.name,
+            comment: exam?.comment,
+            laterality: exam?.laterality,
+            group: exam?.group,
+          }
+        })
+
+        const createdExams = await bulkCreateExams(examsToSend)
+        selectedIds.value = []
+        emit('selected', createdExams)
+      } catch (error) {
+        toast.error('Erro ao salvar exames')
+      } finally {
+        uiStore.setLoading(false)
+      }
     }
 
     return {
@@ -69,6 +90,4 @@ export default defineComponent({
     }
   },
 })
-
-
 </script>
