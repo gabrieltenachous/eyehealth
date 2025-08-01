@@ -1,6 +1,9 @@
 <template>
   <div class="p-6">
     <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1>
+    <BaseButton @click="goBack" variant="secondary" class="mt-6">
+      Voltar e editar seleção
+    </BaseButton>
 
     <div v-if="groupedExams.length === 0" class="text-gray-500">
       Nenhum exame selecionado.
@@ -21,8 +24,8 @@
           <p class="font-medium">{{ exam.name }}</p>
           <p class="text-sm text-gray-600">{{ exam.comment }}</p>
           <p class="text-xs text-blue-600">
-            Lateralidade: {{ exam.laterality || 'Não definida' }} |
-            Grupo: {{ exam.group }}
+            Lateralidade: {{ exam.laterality || 'Não definida' }} | Grupo:
+            {{ exam.group }}
           </p>
         </li>
       </ul>
@@ -37,7 +40,7 @@
 <script lang="ts">
 import { Exam } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
-
+import { useRoute } from 'vue-router/types/composables'
 export default {
   name: 'ExamSummaryPage',
   components: { BaseButton },
@@ -49,6 +52,11 @@ export default {
     return {
       exams,
     }
+  },
+  methods: {
+    goBack() {
+      this.$router.push('/exams/solicitation')
+    },
   },
   computed: {
     groupedExams(): Exam[][] {
