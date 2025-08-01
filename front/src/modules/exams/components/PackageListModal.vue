@@ -39,6 +39,14 @@ import { defineComponent, ref } from 'vue'
 import BaseModal from '@/components/BaseModal.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { Package } from '@/modules/exams'
+import { emit } from 'process'
+const selectedIds = ref<string[]>([])
+
+function emitSelected() {
+  const selected = props.packages.filter(p => selectedIds.value.includes(p.id))
+  const exams = selected.flatMap(p => p.exams)
+  emit('select', exams)
+}
 
 export default defineComponent({
   name: 'PackageListModal',
@@ -50,7 +58,7 @@ export default defineComponent({
   },
 
   emits: ['close', 'select'],
-
+  
   setup(_, { emit }) {
     const selectedIds = ref<string[]>([])
 

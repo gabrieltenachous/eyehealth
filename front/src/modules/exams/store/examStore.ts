@@ -10,5 +10,8 @@ export const useExamStore = defineStore('exam', {
     setExams(data: Exam[]) {
       this.exams = data
     },
+    addExam(exam: Exam) {
+      this.exams.push(exam)
+    }
   },
 })

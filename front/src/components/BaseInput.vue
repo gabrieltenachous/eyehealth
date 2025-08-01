@@ -3,25 +3,20 @@
     v-bind="$attrs"
     :value="value"
     @input="onInput"
+    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
   />
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-
-export default Vue.extend({
+export default {
   name: 'BaseInput',
   props: {
-    value: {
-      type: String,
-      required: true
-    }
+    value: [String, Number],
   },
   methods: {
-    onInput(e: Event) {
-      const target = e.target as HTMLInputElement | null
-      this.$emit('input', target?.value ?? '')
-    }
-  }
-})
+    onInput(event: Event) {
+      this.$emit('input', (event.target as HTMLInputElement).value)
+    },
+  },
+}
 </script>

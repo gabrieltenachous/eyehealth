@@ -70,7 +70,7 @@ export default defineComponent({
     const toast = useToast()
     const uiStore = useUiStore()
 
-    async function handleCreate() {
+    const handleCreate = async () => {
       if (!name.value || selectedExamIds.value.length === 0) {
         toast.error('Informe o nome e selecione ao menos um exame.')
         return
@@ -83,15 +83,17 @@ export default defineComponent({
           exams: selectedExamIds.value,
           observations: observations.value,
         })
+
         toast.success('Pacote criado com sucesso!')
         emit('create', created)
 
-        // Limpar campos e fechar
+        // reset
         name.value = ''
         observations.value = ''
         selectedExamIds.value = []
+
         emit('close')
-      } catch (error) {
+      } catch (err) {
         toast.error('Erro ao criar pacote')
       } finally {
         uiStore.setLoading(false)

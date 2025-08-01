@@ -1,8 +1,11 @@
 <template>
   <div>
     <div v-if="exams.length === 0" class="text-gray-500">Nenhum exame disponível.</div>
+    <BaseButton class="mb-4" @click="showCreateModal = true">Criar novo exame</BaseButton>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <ExamCreateForm :visible="showCreateModal" @close="showCreateModal = false" />
+
       <label
         v-for="exam in exams"
         :key="exam.id"
@@ -38,10 +41,11 @@ import BaseButton from '@/components/BaseButton.vue'
 import { bulkCreateExams } from '../services/examService'
 import { useUiStore } from '@/stores/ui'
 import { useToast } from '@/composables/useToast'
+import ExamCreateForm from './ExamCreateForm.vue'
 
 export default defineComponent({
   name: 'ExamSelection',
-  components: { BaseButton },
+  components: { BaseButton,ExamCreateForm },
 
   props: {
     exams: {
@@ -53,6 +57,7 @@ export default defineComponent({
   emits: ['selected'],
 
   setup(props, { emit }) {
+    const showCreateModal = ref(false)
     const selectedIds = ref<string[]>([])
     const exams = computed(() => props.exams)
     const uiStore = useUiStore()
@@ -86,6 +91,7 @@ export default defineComponent({
     return {
       selectedIds,
       exams,
+      showCreateModal,
       emitSelection,
     }
   },

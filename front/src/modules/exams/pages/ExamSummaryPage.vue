@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { Exam } from '@/modules/exams'
+import { Exam, useExamStore } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
 import { generatePdf } from '@/modules/exams/services/pdfService'
 import { useUiStore } from '@/stores/ui'
@@ -46,14 +46,12 @@ export default {
   name: 'ExamSummaryPage',
   components: { BaseButton },
   data() {
-    const exams = this.$route.query.exams
-      ? (JSON.parse(this.$route.query.exams as string) as Exam[])
-      : []
-
+    const examStore = useExamStore()
     return {
-      exams,
+      exams: examStore.exams
     }
   },
+
   methods: {
     goBack() {
       this.$router.push('/exams/solicitation')

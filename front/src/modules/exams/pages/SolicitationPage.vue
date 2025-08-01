@@ -129,20 +129,10 @@ export default {
       packageStore.setPackages(latestPackages)
       this.packages = packageStore.packages
     },
-    goToSummary() {
-      const grouped = []
-      const all = [...this.selected]
-      const max = 4
-
-      for (let i = 0; i < all.length; i += max) {
-        grouped.push(all.slice(i, i + max))
-      }
+    goToSummary() { 
 
       this.$router.push({
-        path: '/exams/summary',
-        query: {
-          exams: JSON.stringify(grouped.flat()),
-        },
+        path: '/exams/summary', 
       })
     },
   },
