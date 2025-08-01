@@ -7,11 +7,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts"> 
 export default {
   name: 'BaseModal',
   props: {
-    visible: { type: Boolean, required: true },
+    visible: { type: Boolean, required: true }
   },
 }
 </script>

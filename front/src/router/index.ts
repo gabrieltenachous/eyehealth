@@ -22,7 +22,13 @@ export default new Router({
       path: '/exams/summary',
       name: 'ExamSummary',
       component: ExamSummaryPage,
+    },
+    {
+      path: '/exams/solicitation',
+      name: 'solicitation',
+      component: () => import('@/modules/exams/pages/SolicitationPage.vue'),
     }
+
 
   ],
 })

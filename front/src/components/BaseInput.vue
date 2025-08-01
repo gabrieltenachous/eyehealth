@@ -1,17 +1,27 @@
 <template>
   <input
     v-bind="$attrs"
-    :value="modelValue"
-    @input="$emit('update:modelValue', $event.target.value)"
-    class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+    :value="value"
+    @input="onInput"
   />
 </template>
 
 <script lang="ts">
-export default {
+import Vue from 'vue'
+
+export default Vue.extend({
   name: 'BaseInput',
   props: {
-    modelValue: String,
+    value: {
+      type: String,
+      required: true
+    }
   },
-}
+  methods: {
+    onInput(e: Event) {
+      const target = e.target as HTMLInputElement | null
+      this.$emit('input', target?.value ?? '')
+    }
+  }
+})
 </script>
