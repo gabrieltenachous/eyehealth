@@ -33,9 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
-import { fetchExams } from '@/modules/exams'
-import { useExamStore } from '@/modules/exams'
+import { defineComponent, ref, computed } from 'vue'
 import { Exam } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
 
@@ -43,31 +41,34 @@ export default defineComponent({
   name: 'ExamSelection',
   components: { BaseButton },
 
+  props: {
+    exams: {
+      type: Array as () => Exam[],
+      required: true,
+    },
+  },
+
   emits: ['selected'],
 
-  setup(_, { emit }) {
-    const store = useExamStore()
+  setup(props, { emit }) {
     const selectedIds = ref<string[]>([])
 
-    const exams = store.exams
-
-    onMounted(async () => {
-      if (!exams.length) {
-        const data = await fetchExams()
-        store.setExams(data)
-      }
-    })
+    const exams = computed(() => props.exams) // ✅ Aqui está a reatividade correta
 
     const emitSelection = () => {
-      const selected = exams.filter((exam: Exam) => selectedIds.value.includes(exam.id))
+      const selected = exams.value.filter((exam: Exam) =>
+        selectedIds.value.includes(exam.id)
+      )
       emit('selected', selected)
     }
 
     return {
-      exams,
       selectedIds,
+      exams,
       emitSelection,
     }
   },
 })
+
+
 </script>

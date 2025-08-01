@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
 import { PiniaVuePlugin, createPinia } from 'pinia'
+import '@/styles/tailwind.css'
 
 Vue.use(PiniaVuePlugin)
 
