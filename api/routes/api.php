@@ -11,4 +11,6 @@ Route::middleware([EnsureTokenIsValid::class])->prefix('v1')->group(function () 
 
     Route::get('packages', [PackageController::class, 'index']);
     Route::post('packages', [PackageController::class, 'store']);
+    
+    Route::post('exams/bulk', [ExamController::class, 'bulkStore']);
 });
