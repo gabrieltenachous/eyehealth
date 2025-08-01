@@ -3,10 +3,7 @@
     <h2 class="text-lg font-semibold mb-4">Novo Pacote de Exames</h2>
 
     <div class="space-y-4">
-      <BaseInput
-        v-model="name"
-        placeholder="Nome do pacote"
-      />
+      <BaseInput v-model="name" placeholder="Nome do pacote" />
 
       <textarea
         v-model="observations"
@@ -37,7 +34,10 @@
 
     <div class="mt-6 flex justify-end gap-2">
       <BaseButton variant="danger" @click="$emit('close')">Cancelar</BaseButton>
-      <BaseButton :disabled="!name || selectedExamIds.length === 0" @click="handleCreate">
+      <BaseButton
+        :disabled="!name || selectedExamIds.length === 0"
+        @click="handleCreate"
+      >
         Criar pacote
       </BaseButton>
     </div>
@@ -50,6 +50,9 @@ import BaseModal from '@/components/BaseModal.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import { Exam } from '@/modules/exams'
+import { useToast } from '@/composables/useToast'
+import { useUiStore } from '@/stores/ui'
+import { createPackage } from '../services/packageService'
 
 export default defineComponent({
   name: 'PackageCreateModal',
@@ -64,17 +67,35 @@ export default defineComponent({
     const observations = ref('')
     const selectedExamIds = ref<string[]>([])
 
-    const handleCreate = () => {
-      emit('create', {
-        name: name.value,
-        observations: observations.value,
-        exams: selectedExamIds.value,
-      })
+    const toast = useToast()
+    const uiStore = useUiStore()
 
-      // Reset
-      name.value = ''
-      observations.value = ''
-      selectedExamIds.value = []
+    async function handleCreate() {
+      if (!name.value || selectedExamIds.value.length === 0) {
+        toast.error('Informe o nome e selecione ao menos um exame.')
+        return
+      }
+
+      uiStore.setLoading(true)
+      try {
+        const created = await createPackage({
+          name: name.value,
+          exams: selectedExamIds.value,
+          observations: observations.value,
+        })
+        toast.success('Pacote criado com sucesso!')
+        emit('create', created)
+
+        // Limpar campos e fechar
+        name.value = ''
+        observations.value = ''
+        selectedExamIds.value = []
+        emit('close')
+      } catch (error) {
+        toast.error('Erro ao criar pacote')
+      } finally {
+        uiStore.setLoading(false)
+      }
     }
 
     return { name, observations, selectedExamIds, handleCreate }
