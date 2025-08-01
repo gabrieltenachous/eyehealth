@@ -1,6 +1,6 @@
 <template>
   <div class="p-6">
-    <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1> 
+    <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1>
     <div v-if="groupedExams.length === 0" class="text-gray-500">
       Nenhum exame selecionado.
     </div>
@@ -33,16 +33,15 @@
     <BaseButton class="mt-4 ml-4" variant="primary" @click="downloadPdf">
       Baixar PDF
     </BaseButton>
-
   </div>
 </template>
 
 <script lang="ts">
 import { Exam } from '@/modules/exams'
 import BaseButton from '@/components/BaseButton.vue'
-import { useRoute } from 'vue-router/types/composables'
 import { generatePdf } from '@/modules/exams/services/pdfService'
 import { useUiStore } from '@/stores/ui'
+import { useToast } from '@/composables/useToast'
 export default {
   name: 'ExamSummaryPage',
   components: { BaseButton },
@@ -61,6 +60,7 @@ export default {
     },
     async downloadPdf() {
       const uiStore = useUiStore()
+      const toast = useToast()
 
       if (!this.exams.length) return
 
@@ -69,6 +69,7 @@ export default {
         await generatePdf(this.exams)
       } catch (err) {
         console.error('Erro ao baixar PDF', err)
+        toast.error('Erro ao gerar PDF. Tente novamente.')
       } finally {
         uiStore.setLoading(false)
       }
