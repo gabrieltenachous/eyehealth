@@ -1,51 +1,66 @@
 <template>
-  <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">Resumo da Solicitação</h1>
+  <div class="p-6">
+    <h1 class="text-xl font-bold mb-6">Resumo da Solicitação</h1>
 
-    <SolicitationSummary :exams="selectedExams" />
-
-    <div class="mt-6">
-      <BaseButton @click="handlePdf" :disabled="!selectedExams.length">
-        📄 Baixar PDF
-      </BaseButton>
+    <div v-if="groupedExams.length === 0" class="text-gray-500">
+      Nenhum exame selecionado.
     </div>
+
+    <div
+      v-for="(group, index) in groupedExams"
+      :key="index"
+      class="bg-white border rounded mb-6 shadow-sm p-4"
+    >
+      <h2 class="text-lg font-semibold mb-3">Página {{ index + 1 }}</h2>
+      <ul class="space-y-2">
+        <li
+          v-for="exam in group"
+          :key="exam.id"
+          class="p-3 border rounded bg-gray-50"
+        >
+          <p class="font-medium">{{ exam.name }}</p>
+          <p class="text-sm text-gray-600">{{ exam.comment }}</p>
+          <p class="text-xs text-blue-600">
+            Lateralidade: {{ exam.laterality || 'Não definida' }} |
+            Grupo: {{ exam.group }}
+          </p>
+        </li>
+      </ul>
+    </div>
+
+    <router-link to="/exams/selection">
+      <BaseButton variant="secondary">Voltar à seleção</BaseButton>
+    </router-link>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
 import { Exam } from '@/modules/exams'
-import SolicitationSummary from '@/modules/exams/components/SolicitationSummary.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { generateExamPdf } from '@/modules/exams/services/pdfService'
-import { downloadBlob } from '@/modules/exams/services/downloadUtil'
 
-export default defineComponent({
+export default {
   name: 'ExamSummaryPage',
-  components: {
-    SolicitationSummary,
-    BaseButton,
-  },
-
-  setup() {
-    const selectedExams = ref<Exam[]>([])
-
-    onMounted(() => {
-      // 🔁 Simula exames selecionados via localStorage ou estado global
-      const raw = localStorage.getItem('selectedExams')
-      if (raw) selectedExams.value = JSON.parse(raw)
-    })
-
-    const handlePdf = async () => {
-      const ids = selectedExams.value.map(e => e.id)
-      const pdf = await generateExamPdf(ids)
-      downloadBlob(pdf, 'solicitacao_exames.pdf')
-    }
+  components: { BaseButton },
+  data() {
+    const exams = this.$route.query.exams
+      ? (JSON.parse(this.$route.query.exams as string) as Exam[])
+      : []
 
     return {
-      selectedExams,
-      handlePdf,
+      exams,
     }
   },
-})
+  computed: {
+    groupedExams(): Exam[][] {
+      const groups: Exam[][] = []
+      const maxPerGroup = 4
+
+      for (let i = 0; i < this.exams.length; i += maxPerGroup) {
+        groups.push(this.exams.slice(i, i + maxPerGroup))
+      }
+
+      return groups
+    },
+  },
+}
 </script>
